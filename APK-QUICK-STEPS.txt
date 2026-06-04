@@ -1,54 +1,50 @@
-# Railway deploy guide
-
-## 1) Prepare project
-This project is already Railway-ready.
-
-Important files included:
-- `railway.toml`
-- `Procfile`
-- `package.json`
-- `server.js`
-
-## 2) Upload to Railway
-You can deploy by either:
-- connecting a GitHub repo, or
-- uploading/pushing this project to a repo first, then importing into Railway.
-
-## 3) Set environment variables
-Add these in Railway Variables:
-
-```text
-PORT=3000
-ASTRA_AI_BASE_URL=https://openrouter.ai/api/v1
-ASTRA_AI_MODEL=openai/gpt-4.1-mini
-ASTRA_AI_API_KEY=YOUR_OPENROUTER_KEY
-ASTRA_SITE_URL=https://your-railway-domain.up.railway.app
-ASTRA_SITE_TITLE=AstraX Bharat AI
-ASTRA_SERPER_API_KEY=YOUR_SERPER_KEY
-```
-
-Optional:
-
-```text
-ASTRA_SEARCH_ENDPOINT=
-ASTRA_SEARCH_API_KEY=
-ASTRA_IMAGE_ENDPOINT=
-ASTRA_IMAGE_API_KEY=
-ASTRA_TTS_ENDPOINT=
-ASTRA_TTS_API_KEY=
-```
-
-## 4) Deploy
-After deploy, Railway will generate a public URL such as:
-
-```text
-https://your-app-name.up.railway.app
-```
-
-## 5) Permanent QR
-Once you have the Railway public URL, create the QR in the app or send the URL back to Arena.ai and I can generate the final QR image file.
-
-## 6) Firebase note
-If using Firebase auth:
-- add your Railway domain in Firebase Auth -> Authorized domains
-- add your Firebase web config in app Settings
+[
+  {
+    "title": "National Scholarship Portal",
+    "link": "https://scholarships.gov.in/",
+    "source": "Government of India",
+    "category": "Scholarship",
+    "date": "Check regularly",
+    "summary": "Official central portal for many Indian scholarships."
+  },
+  {
+    "title": "Google Careers - Students",
+    "link": "https://careers.google.com/students/",
+    "source": "Google",
+    "category": "Opportunity",
+    "date": "Rolling",
+    "summary": "Official internships, student programs, and early talent opportunities."
+  },
+  {
+    "title": "AICTE official opportunities",
+    "link": "https://www.aicte-india.org/",
+    "source": "AICTE",
+    "category": "Internship",
+    "date": "Official updates",
+    "summary": "Official technical education, internship, and scholarship notices."
+  },
+  {
+    "title": "Internshala student internships",
+    "link": "https://internshala.com/",
+    "source": "Internshala",
+    "category": "Internship",
+    "date": "Daily",
+    "summary": "Student internship discovery platform. Review each listing carefully before applying."
+  },
+  {
+    "title": "MyGov innovation and youth opportunities",
+    "link": "https://www.mygov.in/",
+    "source": "MyGov",
+    "category": "Competition",
+    "date": "Regular",
+    "summary": "Government participation platform with challenges, competitions, and youth engagement programs."
+  },
+  {
+    "title": "SWAYAM official courses",
+    "link": "https://swayam.gov.in/",
+    "source": "SWAYAM",
+    "category": "Learning",
+    "date": "Regular",
+    "summary": "Official online courses and certifications from Indian institutions."
+  }
+]

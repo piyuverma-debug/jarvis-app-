@@ -1,23 +1,468 @@
-{
-  "name": "AstraX Bharat AI",
-  "short_name": "AstraX AI",
-  "description": "A futuristic India-first AI assistant prototype with chat, study hub, image tools, voice presets, quick actions, and no-code app builder.",
-  "start_url": "./index.html",
-  "display": "standalone",
-  "background_color": "#040914",
-  "theme_color": "#07111f",
-  "icons": [
-    {
-      "src": "icons/icon.svg",
-      "sizes": "192x192",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icons/icon.svg",
-      "sizes": "512x512",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    }
-  ]
-}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#07111f" />
+    <meta
+      name="description"
+      content="AstraX Bharat AI is a futuristic India-first personal AI assistant with multilingual chat, OpenRouter-ready AI, Serper-ready search, Firebase-ready auth, study hub, scholarship feed, image tools, and installable app support."
+    />
+    <title>AstraX Bharat AI</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="bg-orb orb-a"></div>
+    <div class="bg-orb orb-b"></div>
+    <div class="bg-grid"></div>
+
+    <div class="app-shell">
+      <header class="topbar card">
+        <div class="brand-block">
+          <div class="brand-logo">AX</div>
+          <div>
+            <p class="eyebrow">FUTURE PERSONAL COMMAND SYSTEM</p>
+            <h1>AstraX Bharat AI</h1>
+            <p class="muted">
+              India-first personal AI assistant shell with multilingual chat, OpenRouter-ready intelligence,
+              Serper-ready search, Firebase-ready auth, legal study resources, scholarship tracking,
+              image tools, and installable mobile support.
+            </p>
+          </div>
+        </div>
+
+        <div class="topbar-actions">
+          <label class="compact-field">
+            <span>Language</span>
+            <select id="languageSelect"></select>
+          </label>
+          <label class="compact-field">
+            <span>Mode</span>
+            <select id="assistantModeSelect"></select>
+          </label>
+          <div class="auth-chip-wrap">
+            <span id="authStatus" class="status-pill">Guest Mode</span>
+            <button id="authBtn" class="ghost-btn">Login / Signup</button>
+          </div>
+          <button id="installBtn" class="ghost-btn">Install App</button>
+          <button id="shareBtn" class="ghost-btn">Share</button>
+          <button id="settingsBtn" class="primary-btn">API Settings</button>
+        </div>
+      </header>
+
+      <main class="main-grid">
+        <section class="chat-panel card">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">EMPATHIC MULTI-MODEL CHAT</p>
+              <h2>Command Console</h2>
+            </div>
+            <div class="status-row">
+              <span class="status-pill online">Ready</span>
+              <span class="status-pill">24 Language Mode</span>
+              <span class="status-pill">OpenRouter + Firebase Ready</span>
+            </div>
+          </div>
+
+          <div class="assistant-summary card-lite">
+            <div>
+              <strong id="assistantLanguageLabel">Language: English</strong>
+              <p class="muted" id="languageHint">
+                Connect OpenRouter, Serper, and Firebase to unlock live AI, search, and auth.
+              </p>
+            </div>
+            <div class="toggle-group">
+              <label class="toggle-line">
+                <input type="checkbox" id="webSearchToggle" checked />
+                <span>Use web-backed answers</span>
+              </label>
+              <label class="toggle-line">
+                <input type="checkbox" id="psychologyToggle" checked />
+                <span>Empathy / psychology aware</span>
+              </label>
+            </div>
+          </div>
+
+          <div id="chatMessages" class="chat-messages"></div>
+
+          <div id="sourcePanel" class="source-panel hidden">
+            <div class="module-head">
+              <div>
+                <p class="eyebrow">SOURCES</p>
+                <h3>Web / official references</h3>
+              </div>
+              <button id="clearSourcesBtn" class="ghost-btn small-btn">Clear</button>
+            </div>
+            <div id="sourceList" class="resource-list"></div>
+          </div>
+
+          <div class="composer">
+            <textarea
+              id="promptInput"
+              rows="4"
+              placeholder="Ask anything, say 'open WhatsApp', 'build a scholarship dashboard app', 'make Pinterest caption', or 'help me with UPSC plan'."
+            ></textarea>
+            <div class="composer-actions">
+              <span id="voiceStatus" class="muted mini-status">Voice ready when browser supports speech recognition.</span>
+              <button id="voiceInputBtn" class="ghost-btn">Voice Input</button>
+              <button id="clearChatBtn" class="ghost-btn">Clear</button>
+              <button id="sendBtn" class="primary-btn">Send</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="workspace-panel">
+          <div class="hero-grid">
+            <article class="hero-card card">
+              <p class="eyebrow">SAFE FULL-STACK STARTER</p>
+              <h3>What this upgraded build includes</h3>
+              <ul class="feature-list">
+                <li>Frontend PWA + Node backend starter</li>
+                <li>OpenRouter-ready AI proxy support</li>
+                <li>Serper-ready web search + source panel</li>
+                <li>Firebase-ready auth + Firestore hooks</li>
+                <li>Speech input support where browser allows</li>
+                <li>No-code app starter generator and export</li>
+                <li>Deploy docs for mobile install + Android wrapping</li>
+              </ul>
+            </article>
+
+            <article class="hero-card card warning-card">
+              <p class="eyebrow">IMPORTANT LIMITS</p>
+              <h3>Kept safe and legal</h3>
+              <ul class="feature-list">
+                <li>No pirated coaching notes are bundled</li>
+                <li>No mod APK / premium crack / bypass tools</li>
+                <li>Real search, TTS, image AI, and advanced publishing need your API keys/accounts</li>
+                <li>In this preview, network-reliant features may not fully render</li>
+              </ul>
+            </article>
+          </div>
+
+          <div class="module-grid">
+            <article class="module card">
+              <div class="module-head">
+                <div>
+                  <p class="eyebrow">STUDY HUB</p>
+                  <h3>CUET - NEET - JEE - NDA - UPSC</h3>
+                </div>
+                <div class="button-row compact-row">
+                  <span class="status-pill">Official + custom</span>
+                  <button id="refreshResourcesBtn" class="ghost-btn small-btn">Refresh</button>
+                </div>
+              </div>
+              <p class="muted">
+                Includes official/legal starter links. You can also add your own notes, Drive links, PDFs, or topic trackers.
+              </p>
+              <div class="study-tags" id="studyTags"></div>
+              <div class="study-input-row">
+                <select id="examSelect">
+                  <option value="CUET">CUET</option>
+                  <option value="NEET">NEET</option>
+                  <option value="JEE">JEE</option>
+                  <option value="NDA">NDA</option>
+                  <option value="UPSC">UPSC</option>
+                </select>
+                <input id="resourceTitle" type="text" placeholder="Resource title" />
+                <input id="resourceLink" type="url" placeholder="https://your-note-or-drive-link" />
+                <button id="addResourceBtn" class="ghost-btn">Add</button>
+              </div>
+              <div id="resourceList" class="resource-list"></div>
+            </article>
+
+            <article class="module card">
+              <div class="module-head">
+                <div>
+                  <p class="eyebrow">NO-CODE BUILDER</p>
+                  <h3>Build mini apps with words</h3>
+                </div>
+                <span class="status-pill">Export HTML</span>
+              </div>
+              <textarea
+                id="appIdeaInput"
+                rows="4"
+                placeholder="Example: Build a futuristic student scholarship dashboard with dark theme, cards, daily updates, and contact CTA."
+              ></textarea>
+              <div class="button-row wrap-row">
+                <button id="generateAppBtn" class="primary-btn">Generate Starter App</button>
+                <button id="downloadAppBtn" class="ghost-btn">Download HTML</button>
+                <button id="copyAppBtn" class="ghost-btn">Copy Code</button>
+              </div>
+              <pre id="generatedAppPreview" class="code-preview">Your generated starter app code will appear here.</pre>
+            </article>
+
+            <article class="module card image-module">
+              <div class="module-head">
+                <div>
+                  <p class="eyebrow">IMAGE STUDIO</p>
+                  <h3>Edit photos with prompt + sliders</h3>
+                </div>
+                <span class="status-pill">Local canvas + API-ready</span>
+              </div>
+              <div class="button-row wrap-row">
+                <input id="imageUpload" type="file" accept="image/*" />
+                <input id="imagePrompt" type="text" placeholder="Try: cinematic, bright, warm, vintage, dramatic, cool" />
+                <button id="applyPromptStyleBtn" class="ghost-btn">Apply Prompt Style</button>
+                <button id="downloadImageBtn" class="primary-btn">Download Image</button>
+              </div>
+              <div class="slider-grid">
+                <label>Brightness <input id="brightnessSlider" type="range" min="50" max="150" value="100" /></label>
+                <label>Contrast <input id="contrastSlider" type="range" min="50" max="150" value="100" /></label>
+                <label>Saturation <input id="saturationSlider" type="range" min="0" max="200" value="100" /></label>
+              </div>
+              <canvas id="imageCanvas" width="640" height="360"></canvas>
+              <p class="muted image-note">
+                For true prompt-based AI editing or background replacement, connect an image API in Settings or backend env.
+              </p>
+            </article>
+
+            <article class="module card">
+              <div class="module-head">
+                <div>
+                  <p class="eyebrow">PINTEREST CREATOR</p>
+                  <h3>Titles, captions, descriptions, hashtags</h3>
+                </div>
+                <span class="status-pill">Fast templates</span>
+              </div>
+              <div class="pinterest-grid">
+                <input id="pinTopic" type="text" placeholder="Topic or product" />
+                <input id="pinAudience" type="text" placeholder="Audience e.g. students, creators, founders" />
+                <input id="pinVibe" type="text" placeholder="Vibe e.g. luxury, aesthetic, minimal" />
+                <input id="pinCTA" type="text" placeholder="CTA e.g. save this, join now" />
+              </div>
+              <button id="generatePinBtn" class="primary-btn">Generate Pinterest Copy</button>
+              <div id="pinResult" class="result-box"></div>
+            </article>
+
+            <article class="module card">
+              <div class="module-head">
+                <div>
+                  <p class="eyebrow">VOICE LAB</p>
+                  <h3>10 Indian girl + 10 Indian boy presets</h3>
+                </div>
+                <span class="status-pill">Speech preview</span>
+              </div>
+              <p class="muted">
+                Demo uses browser speech where available. For realistic human voice, connect a licensed TTS provider in backend or settings.
+              </p>
+              <div id="voiceGrid" class="voice-grid"></div>
+            </article>
+
+            <article class="module card">
+              <div class="module-head">
+                <div>
+                  <p class="eyebrow">SCHOLARSHIP + OPPORTUNITY FEED</p>
+                  <h3>Daily student opportunity tracker</h3>
+                </div>
+                <div class="button-row compact-row">
+                  <span id="opportunityMeta" class="status-pill">Curated feed</span>
+                  <button id="refreshOpportunityBtn" class="ghost-btn small-btn">Refresh</button>
+                </div>
+              </div>
+              <p class="muted">
+                Add official scholarship portals, Google programs, internships, hackathons, and student opportunities.
+              </p>
+              <div class="study-input-row">
+                <input id="opportunityTitle" type="text" placeholder="Opportunity title" />
+                <input id="opportunityLink" type="url" placeholder="Official link" />
+                <button id="addOpportunityBtn" class="ghost-btn">Add</button>
+              </div>
+              <div id="opportunityList" class="resource-list"></div>
+            </article>
+
+            <article class="module card">
+              <div class="module-head">
+                <div>
+                  <p class="eyebrow">QUICK ACTIONS</p>
+                  <h3>Nova-like shortcuts</h3>
+                </div>
+                <span class="status-pill">Best on mobile</span>
+              </div>
+              <div class="action-grid">
+                <button class="action-btn" data-action="whatsapp">WhatsApp</button>
+                <button class="action-btn" data-action="mail">Mail</button>
+                <button class="action-btn" data-action="call">Call</button>
+                <button class="action-btn" data-action="maps">Maps</button>
+                <button class="action-btn" data-action="youtube">YouTube</button>
+                <button class="action-btn" data-action="camera">Camera</button>
+                <button class="action-btn" data-action="calendar">Calendar</button>
+                <button class="action-btn" data-action="playstore">Play Store</button>
+              </div>
+              <input id="cameraInput" type="file" accept="image/*" capture="environment" hidden />
+            </article>
+
+            <article class="module card">
+              <div class="module-head">
+                <div>
+                  <p class="eyebrow">INSTALL + DEPLOY + QR</p>
+                  <h3>Share, install, wrap for Android</h3>
+                </div>
+                <span class="status-pill">PWA + Capacitor-ready</span>
+              </div>
+              <p class="muted">
+                Permanent public deployment is set to <strong>https://jarvis-app.railway.app</strong>. You can still paste another deployed URL below to generate a new QR.
+              </p>
+              <div class="study-input-row">
+                <input id="deployUrl" type="url" placeholder="https://your-domain.com/app" />
+                <button id="generateQrBtn" class="primary-btn">Generate QR</button>
+                <button id="downloadGuideBtn" class="ghost-btn">Download Deploy Guide</button>
+                <a class="ghost-btn" href="https://jarvis-app.railway.app" target="_blank" rel="noreferrer">Open Public App</a>
+              </div>
+              <div class="qr-wrap">
+                <img id="qrImage" alt="Deployment QR code" />
+                <div class="qr-note">
+                  <strong>Install flow</strong>
+                  <p class="muted">
+                    1) Deploy the project. 2) Open the URL on mobile. 3) Use Install / Add to Home Screen. 4) For APK, follow docs in the project.
+                  </p>
+                  <div id="publishGuide" class="result-box small-box">
+                    PWA install works after deployment. Android shell instructions are included in docs/ANDROID.md.
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <aside id="settingsDrawer" class="settings-drawer hidden">
+      <div class="settings-card card">
+        <div class="module-head">
+          <div>
+            <p class="eyebrow">PROVIDER SETTINGS</p>
+            <h3>OpenRouter + Serper + Firebase</h3>
+          </div>
+          <button id="closeSettingsBtn" class="ghost-btn">Close</button>
+        </div>
+
+        <div class="settings-grid">
+          <label>
+            Backend URL (optional)
+            <input id="backendUrl" type="url" placeholder="Leave blank to use same-origin /api routes" />
+          </label>
+          <label class="checkbox-label">
+            <span>Use backend proxy</span>
+            <div class="toggle-line boxed-toggle">
+              <input id="useBackendProxy" type="checkbox" checked />
+              <span>Recommended for safety</span>
+            </div>
+          </label>
+          <label>
+            OpenRouter / AI Base URL
+            <input id="aiBaseUrl" type="url" placeholder="https://openrouter.ai/api/v1" />
+          </label>
+          <label>
+            AI Model
+            <input id="aiModel" type="text" placeholder="openai/gpt-4.1-mini or other OpenRouter model" />
+          </label>
+          <label>
+            AI API Key
+            <input id="aiApiKey" type="password" placeholder="Paste key only for personal testing" />
+          </label>
+          <label>
+            Search Endpoint (optional)
+            <input id="searchEndpoint" type="url" placeholder="Your custom search backend endpoint" />
+          </label>
+          <label>
+            Search API Key (optional)
+            <input id="searchApiKey" type="password" placeholder="Optional search key" />
+          </label>
+          <label>
+            Image Edit Endpoint (optional)
+            <input id="imageEndpoint" type="url" placeholder="Your image edit backend route" />
+          </label>
+          <label>
+            TTS Endpoint (optional)
+            <input id="ttsEndpoint" type="url" placeholder="Your TTS backend route" />
+          </label>
+          <label>
+            Firebase API Key
+            <input id="firebaseApiKey" type="text" placeholder="Firebase web app apiKey" />
+          </label>
+          <label>
+            Firebase Auth Domain
+            <input id="firebaseAuthDomain" type="text" placeholder="project-id.firebaseapp.com" />
+          </label>
+          <label>
+            Firebase Project ID
+            <input id="firebaseProjectId" type="text" placeholder="project-id" />
+          </label>
+          <label>
+            Firebase App ID
+            <input id="firebaseAppId" type="text" placeholder="1:xxxx:web:xxxx" />
+          </label>
+          <label>
+            Firebase Storage Bucket
+            <input id="firebaseStorageBucket" type="text" placeholder="project-id.firebasestorage.app" />
+          </label>
+          <label>
+            Firebase Messaging Sender ID
+            <input id="firebaseMessagingSenderId" type="text" placeholder="1234567890" />
+          </label>
+          <label>
+            Notes
+            <textarea id="settingsNotes" rows="4" placeholder="Best practice: keep provider secrets on backend, not in browser storage."></textarea>
+          </label>
+        </div>
+
+        <div class="button-row">
+          <button id="saveSettingsBtn" class="primary-btn">Save Settings</button>
+          <button id="resetSettingsBtn" class="ghost-btn">Reset</button>
+        </div>
+      </div>
+    </aside>
+
+    <aside id="authDrawer" class="settings-drawer hidden">
+      <div class="settings-card card auth-card">
+        <div class="module-head">
+          <div>
+            <p class="eyebrow">FIREBASE AUTH</p>
+            <h3>Login / Signup</h3>
+          </div>
+          <button id="closeAuthBtn" class="ghost-btn">Close</button>
+        </div>
+
+        <p id="firebaseStatus" class="muted">
+          Add Firebase config in Settings, deploy the app, then login/signup will work using Firebase Auth.
+        </p>
+
+        <div class="settings-grid auth-grid">
+          <label>
+            Name
+            <input id="authName" type="text" placeholder="Your name" />
+          </label>
+          <label>
+            Email
+            <input id="authEmail" type="email" placeholder="you@example.com" />
+          </label>
+          <label>
+            Password
+            <input id="authPassword" type="password" placeholder="At least 6 characters" />
+          </label>
+          <label>
+            Goal / Role
+            <input id="authRole" type="text" placeholder="Student / Creator / Founder" />
+          </label>
+        </div>
+
+        <div class="button-row">
+          <button id="signupBtn" class="primary-btn">Create Account</button>
+          <button id="loginBtn" class="ghost-btn">Login</button>
+          <button id="logoutBtn" class="ghost-btn">Logout</button>
+        </div>
+      </div>
+    </aside>
+
+    <template id="messageTemplate">
+      <div class="message">
+        <div class="message-avatar"></div>
+        <div class="message-bubble"></div>
+      </div>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,21 +1,8 @@
-PORT=3000
-
-# OpenRouter / OpenAI-compatible chat provider
-ASTRA_AI_BASE_URL=https://openrouter.ai/api/v1
-ASTRA_AI_MODEL=openai/gpt-4.1-mini
-ASTRA_AI_API_KEY=your_openrouter_or_compatible_key_here
-ASTRA_SITE_URL=https://jarvis-app.railway.app
-ASTRA_SITE_TITLE=AstraX Bharat AI
-
-# Serper search (recommended)
-ASTRA_SERPER_API_KEY=your_serper_key_here
-
-# Optional custom search backend instead of Serper
-ASTRA_SEARCH_ENDPOINT=
-ASTRA_SEARCH_API_KEY=
-
-# Extend server.js if you want to proxy image / TTS providers
-ASTRA_IMAGE_ENDPOINT=
-ASTRA_IMAGE_API_KEY=
-ASTRA_TTS_ENDPOINT=
-ASTRA_TTS_API_KEY=
+{
+  "apiKey": "your_firebase_api_key",
+  "authDomain": "your-project.firebaseapp.com",
+  "projectId": "your-project-id",
+  "appId": "1:1234567890:web:abcdef123456",
+  "storageBucket": "your-project.firebasestorage.app",
+  "messagingSenderId": "1234567890"
+}
