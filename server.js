@@ -41,6 +41,10 @@ const server = http.createServer(async (req, res) => {
       });
     }
 
+    if (req.method === 'GET' && (url.pathname === '/' || url.pathname === '')) {
+      return serveIndex(res);
+    }
+
     if (req.method === 'GET' && url.pathname === '/api/resources') {
       return sendJson(res, 200, {
         resources: readJson('official-resources.json', {})
@@ -225,8 +229,25 @@ function offlineReply(message) {
   return 'AstraX Bharat AI minimal backend is active. Your frontend should load properly now. Advanced AI can be connected later with OpenRouter, Serper, and Firebase.';
 }
 
+function serveIndex(res) {
+  fs.readFile(path.join(ROOT, 'index.html'), (err, content) => {
+    if (err) return sendJson(res, 404, { error: 'index.html not found' });
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    res.end(content);
+  });
+}
+
 function serveStatic(res, pathname) {
-  let requestPath = pathname === '/' ? '/index.html' : decodeURIComponent(pathname);
+  const requestPath = decodeURIComponent(pathname || '/');
+
+  if (isDeniedStaticPath(requestPath)) {
+    return sendJson(res, 404, { error: 'Not found' });
+  }
+
+  if (!path.extname(requestPath)) {
+    return serveIndex(res);
+  }
+
   const safePath = path.normalize(requestPath).replace(/^([.][.][\/\\])+/, '');
   const fullPath = path.join(ROOT, safePath);
 
@@ -236,21 +257,32 @@ function serveStatic(res, pathname) {
 
   fs.stat(fullPath, (err, stat) => {
     if (err || !stat.isFile()) {
-      return fs.readFile(path.join(ROOT, 'index.html'), (fallbackErr, content) => {
-        if (fallbackErr) return sendJson(res, 404, { error: 'Not found' });
-        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-        res.end(content);
-      });
+      return serveIndex(res);
     }
 
     const ext = path.extname(fullPath).toLowerCase();
-    const contentType = MIME[ext] || 'application/octet-stream';
+    const contentType = MIME[ext];
+    if (!contentType) {
+      return sendJson(res, 404, { error: 'Not found' });
+    }
+
     fs.readFile(fullPath, (readErr, content) => {
       if (readErr) return sendJson(res, 500, { error: 'Failed to read file' });
       res.writeHead(200, { 'Content-Type': contentType });
       res.end(content);
     });
   });
+}
+
+function isDeniedStaticPath(requestPath) {
+  const lower = String(requestPath || '').toLowerCase();
+  return (
+    lower.includes('.env') ||
+    lower.includes('firebase.rules') ||
+    lower.includes('firebase.config.example') ||
+    lower.startsWith('/docs/') ||
+    lower.startsWith('/data/')
+  );
 }
 
 function dedupeBy(list, keyFn) {
