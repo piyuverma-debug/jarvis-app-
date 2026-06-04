@@ -1,164 +1,264 @@
-# AstraX Bharat AI
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
+const { URL } = require('url');
 
-A futuristic India-first personal AI assistant starter with:
+const PORT = Number(process.env.PORT || 3000);
+const ROOT = __dirname;
+const DATA_DIR = path.join(ROOT, 'data');
 
-- installable PWA frontend
-- Node backend starter
-- OpenRouter-ready AI integration
-- Serper-ready search integration
-- Firebase-ready auth + Firestore hooks
-- multilingual chat shell
-- study hub for CUET / NEET / JEE / NDA / UPSC
-- scholarship and opportunity feed
-- no-code starter app generator
-- image prompt styling + local editor
-- Pinterest description/caption generator
-- quick mobile actions
-- voice preview + browser speech input
-- deploy/install/QR guidance
-- Capacitor Android-ready setup docs
+const MIME = {
+  '.html': 'text/html; charset=utf-8',
+  '.css': 'text/css; charset=utf-8',
+  '.js': 'application/javascript; charset=utf-8',
+  '.json': 'application/json; charset=utf-8',
+  '.svg': 'image/svg+xml',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.webmanifest': 'application/manifest+json; charset=utf-8',
+  '.md': 'text/markdown; charset=utf-8',
+  '.txt': 'text/plain; charset=utf-8'
+};
 
-## Important legal limits
+const server = http.createServer(async (req, res) => {
+  setCors(res);
+  const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
 
-This project intentionally **does not** include:
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204);
+    res.end();
+    return;
+  }
 
-- pirated PW or other copyrighted coaching notes
-- cracked or mod APK generation
-- premium unlock / bypass tools
-- proprietary ChatGPT source code
+  try {
+    if (req.method === 'GET' && url.pathname === '/api/health') {
+      return sendJson(res, 200, {
+        ok: true,
+        app: 'AstraX Bharat AI',
+        mode: 'minimal-server',
+        time: new Date().toISOString()
+      });
+    }
 
-It is designed as a **safe starter** that you can extend with your own content, official links, and licensed APIs.
+    if (req.method === 'GET' && url.pathname === '/api/resources') {
+      return sendJson(res, 200, {
+        resources: readJson('official-resources.json', {})
+      });
+    }
 
-## Project structure
+    if (req.method === 'GET' && url.pathname === '/api/opportunities') {
+      return sendJson(res, 200, {
+        generatedAt: new Date().toISOString(),
+        items: mergeOpportunities()
+      });
+    }
 
-- `index.html` - frontend UI
-- `styles.css` - futuristic styling
-- `app.js` - client logic
-- `server.js` - lightweight Node backend + API routes
-- `data/official-resources.json` - official/legal starter resources
-- `data/opportunities.json` - curated opportunity feed seed
-- `data/generated-opportunities.json` - refreshed opportunity feed output
-- `scripts/refresh-opportunities.js` - Serper-based feed refresh script
-- `firebase.config.example.json` - Firebase config example
-- `manifest.webmanifest` / `sw.js` - PWA support
-- `capacitor.config.json` - Android shell starter
-- `docs/ANDROID.md` - APK wrapping guide
-- `docs/DEPLOY.md` - deployment guide
-- `docs/FIREBASE.md` - Firebase setup guide
-- `docs/OPENROUTER.md` - OpenRouter setup guide
-- `docs/SERPER.md` - Serper setup guide
-- `docs/FINAL-LIVE-SETUP.md` - final live URL/QR/setup checklist
-- `firebase.rules.example` - Firestore rules starter
+    if (req.method === 'POST' && url.pathname === '/api/opportunities-refresh') {
+      return sendJson(res, 200, {
+        ok: true,
+        items: mergeOpportunities()
+      });
+    }
 
-## Run locally
+    if (req.method === 'POST' && url.pathname === '/api/search') {
+      const body = await readBody(req);
+      const query = String(body.query || '').trim();
+      return sendJson(res, 200, {
+        query,
+        results: simpleSearch(query)
+      });
+    }
 
-```bash
-npm start
-```
+    if (req.method === 'POST' && url.pathname === '/api/chat') {
+      const body = await readBody(req);
+      const message = String(body.message || '').trim();
+      return sendJson(res, 200, {
+        reply: offlineReply(message),
+        sources: simpleSearch(message).slice(0, 3)
+      });
+    }
 
-Open:
+    if (req.method === 'POST' && (url.pathname === '/api/image-edit' || url.pathname === '/api/tts')) {
+      return sendJson(res, 501, {
+        error: 'This minimal server does not proxy advanced APIs yet.'
+      });
+    }
 
-```text
-http://localhost:3000
-```
+    if (req.method === 'GET') {
+      return serveStatic(res, url.pathname);
+    }
 
-## Check code
+    return sendJson(res, 404, { error: 'Not found' });
+  } catch (error) {
+    return sendJson(res, 500, { error: error.message || 'Server error' });
+  }
+});
 
-```bash
-npm run check
-```
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`AstraX Bharat AI running on http://0.0.0.0:${PORT}`);
+});
 
-## Refresh opportunity feed
+function setCors(res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+}
 
-```bash
-npm run feed:refresh
-```
+function sendJson(res, status, payload) {
+  res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
+  res.end(JSON.stringify(payload, null, 2));
+}
 
-If `ASTRA_SERPER_API_KEY` is missing, the script falls back to the seed feed.
+function readBody(req) {
+  return new Promise((resolve, reject) => {
+    let raw = '';
+    req.on('data', (chunk) => {
+      raw += chunk;
+      if (raw.length > 1024 * 1024) {
+        reject(new Error('Request body too large'));
+        req.destroy();
+      }
+    });
+    req.on('end', () => {
+      if (!raw) return resolve({});
+      try {
+        resolve(JSON.parse(raw));
+      } catch {
+        resolve({});
+      }
+    });
+    req.on('error', reject);
+  });
+}
 
-## Environment variables
+function readJson(fileName, fallback) {
+  try {
+    const filePath = path.join(DATA_DIR, fileName);
+    const raw = fs.readFileSync(filePath, 'utf8');
+    return JSON.parse(raw);
+  } catch {
+    return fallback;
+  }
+}
 
-Copy `.env.example` to `.env` and configure:
+function mergeOpportunities() {
+  const seed = readJson('opportunities.json', []);
+  const generated = readJson('generated-opportunities.json', []);
+  return dedupeBy(seed.concat(generated), (item) => `${item.title}|${item.link}`);
+}
 
-- `ASTRA_AI_BASE_URL`
-- `ASTRA_AI_MODEL`
-- `ASTRA_AI_API_KEY`
-- `ASTRA_SITE_URL`
-- `ASTRA_SITE_TITLE`
-- `ASTRA_SERPER_API_KEY`
-- or `ASTRA_SEARCH_ENDPOINT` / `ASTRA_SEARCH_API_KEY`
+function simpleSearch(query) {
+  const q = String(query || '').toLowerCase();
+  const results = [];
+  const resources = readJson('official-resources.json', {});
+  const opportunities = mergeOpportunities();
 
-## API routes
+  Object.keys(resources).forEach((exam) => {
+    if (!q || q.includes(exam.toLowerCase())) {
+      resources[exam].forEach((item) => {
+        results.push({
+          title: `${exam}: ${item.title}`,
+          url: item.link,
+          snippet: 'Official or legal starter resource.'
+        });
+      });
+    }
+  });
 
-- `GET /api/health`
-- `GET /api/resources`
-- `GET /api/opportunities`
-- `POST /api/opportunities-refresh`
-- `POST /api/search`
-- `POST /api/chat`
-- `POST /api/image-edit` (placeholder)
-- `POST /api/tts` (placeholder)
+  if (q.includes('scholarship') || q.includes('student') || q.includes('opportunity') || q.includes('google')) {
+    opportunities.forEach((item) => {
+      results.push({
+        title: item.title,
+        url: item.link,
+        snippet: `${item.category || 'Opportunity'} - ${item.source || 'Official'}`
+      });
+    });
+  }
 
-## Search behavior
+  if (!results.length) {
+    results.push(
+      {
+        title: 'National Scholarship Portal',
+        url: 'https://scholarships.gov.in/',
+        snippet: 'Official scholarship portal.'
+      },
+      {
+        title: 'Google Student Programs',
+        url: 'https://careers.google.com/students/',
+        snippet: 'Official Google student opportunities.'
+      },
+      {
+        title: 'UPSC Official Portal',
+        url: 'https://upsc.gov.in/',
+        snippet: 'Official UPSC announcements.'
+      }
+    );
+  }
 
-Priority order:
-1. Serper if configured
-2. custom search endpoint if configured
-3. public DuckDuckGo-based fallback
-4. curated official fallback
+  return results.slice(0, 8);
+}
 
-## Firebase behavior
+function offlineReply(message) {
+  const text = String(message || '').trim().toLowerCase();
 
-Frontend includes auth and Firestore hooks, but you must:
-- add your Firebase web config
-- enable Email/Password auth
-- enable Firestore
-- authorize your deployed domain
+  if (!text) {
+    return 'Namaste! AstraX Bharat AI minimal server is live. Frontend should now open correctly on Railway.';
+  }
 
-See `docs/FIREBASE.md`.
+  if (/cuet|neet|jee|nda|upsc/.test(text)) {
+    return 'I can help with exam planning, revision strategy, and official resources. Open the Study Hub section for legal starter links.';
+  }
 
-## Mobile / Android
+  if (/scholarship|opportunity|internship|google/.test(text)) {
+    return 'Use the opportunity feed for scholarships, internships, and student programs. You can also refresh the feed in the app.';
+  }
 
-### PWA install
-Public app URL:
+  if (/sad|stress|anxious|tired|worried|burnout/.test(text)) {
+    return 'I noticed stress in your message. Take one slow breath and tell me if you want emotional support, a plan, or a simple task list.';
+  }
 
-```text
-https://jarvis-app.railway.app
-```
+  if (/photo|image|pinterest/.test(text)) {
+    return 'Use Image Studio and Pinterest Creator in the frontend. Those tools work directly in the browser UI.';
+  }
 
-Permanent QR file:
+  return 'AstraX Bharat AI minimal backend is active. Your frontend should load properly now. Advanced AI can be connected later with OpenRouter, Serper, and Firebase.';
+}
 
-```text
-qr/jarvis-app-railway-permanent-qr.png
-```
+function serveStatic(res, pathname) {
+  let requestPath = pathname === '/' ? '/index.html' : decodeURIComponent(pathname);
+  const safePath = path.normalize(requestPath).replace(/^([.][.][\/\\])+/, '');
+  const fullPath = path.join(ROOT, safePath);
 
-Open the public URL on Android and use Add to Home Screen / Install.
+  if (!fullPath.startsWith(ROOT)) {
+    return sendJson(res, 403, { error: 'Forbidden' });
+  }
 
-### APK shell
-Use:
+  fs.stat(fullPath, (err, stat) => {
+    if (err || !stat.isFile()) {
+      return fs.readFile(path.join(ROOT, 'index.html'), (fallbackErr, content) => {
+        if (fallbackErr) return sendJson(res, 404, { error: 'Not found' });
+        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+        res.end(content);
+      });
+    }
 
-```bash
-npm run android:add
-npm run android:sync
-npm run android:open
-```
+    const ext = path.extname(fullPath).toLowerCase();
+    const contentType = MIME[ext] || 'application/octet-stream';
+    fs.readFile(fullPath, (readErr, content) => {
+      if (readErr) return sendJson(res, 500, { error: 'Failed to read file' });
+      res.writeHead(200, { 'Content-Type': contentType });
+      res.end(content);
+    });
+  });
+}
 
-Then build APK/AAB in Android Studio.
-
-## Railway deploy
-Railway-ready files are included:
-- `railway.toml`
-- `Procfile`
-- `docs/RAILWAY.md`
-
-After Railway gives you a public URL, that URL can be turned into a permanent QR code for mobile install/share.
-
-## Recommended next upgrades
-
-1. Add production auth rules and user roles
-2. Move all sensitive provider calls fully to backend
-3. Connect real TTS and image APIs
-4. Add file upload / knowledge base / RAG memory
-5. Add database for full persistent chats and notes
-6. Add admin panel for resources and opportunity management
-7. Add push notifications for scholarships/opportunities
+function dedupeBy(list, keyFn) {
+  const seen = new Set();
+  return list.filter((item) => {
+    const key = keyFn(item);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
