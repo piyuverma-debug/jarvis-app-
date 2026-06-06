@@ -1,26 +1,60 @@
-# Deploy guide
+# Final live setup checklist
 
-## Quick local run
-```bash
-npm start
+## Public app URL
+Your current public URL is:
+
+```text
+https://jarvis-app.railway.app
 ```
-Open `http://localhost:3000`
 
-## Production hosting ideas
-- Render
-- Railway
-- Fly.io
-- Any VPS / Node host
-- Docker-compatible platforms
+## Permanent QR
+Included file:
 
-## Required steps for production
-1. Copy `.env.example` to `.env` or configure environment variables in your host.
-2. Add `ASTRA_AI_*` variables for chat.
-3. Add `ASTRA_SEARCH_*` variables for better search citations.
-4. Deploy on HTTPS.
-5. Open the app on mobile and use Install / Add to Home Screen.
+```text
+qr/jarvis-app-railway-permanent-qr.png
+```
 
-## Notes
-- Better web citations usually need a proper search provider.
-- Real human-like Indian voices require a licensed TTS provider.
-- Real AI image editing requires a provider-specific backend.
+## OpenRouter live setup
+Add these on Railway:
+
+```text
+ASTRA_AI_BASE_URL=https://openrouter.ai/api/v1
+ASTRA_AI_MODEL=openai/gpt-4.1-mini
+ASTRA_AI_API_KEY=YOUR_OPENROUTER_KEY
+ASTRA_SITE_URL=https://jarvis-app.railway.app
+ASTRA_SITE_TITLE=AstraX Bharat AI
+```
+
+## Serper live setup
+Add:
+
+```text
+ASTRA_SERPER_API_KEY=YOUR_SERPER_KEY
+```
+
+Then refresh opportunity feed:
+
+```bash
+npm run feed:refresh
+```
+
+## Firebase live setup
+In Firebase:
+1. Enable Email/Password auth
+2. Enable Firestore
+3. Add `jarvis-app.railway.app` to Authorized domains
+4. Put Firebase web app config into the app Settings screen
+
+## Android
+### PWA
+Open:
+```text
+https://jarvis-app.railway.app
+```
+and tap Install.
+
+### APK
+Follow:
+```text
+docs/ANDROID.md
+```

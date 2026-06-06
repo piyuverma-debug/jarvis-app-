@@ -1,60 +1,43 @@
-# Final live setup checklist
+# Firebase setup guide
 
-## Public app URL
-Your current public URL is:
+This project includes **Firebase-ready auth + Firestore hooks** in the frontend.
+
+## What is already scaffolded
+- signup
+- login
+- logout
+- auth status chip
+- optional user profile sync to Firestore
+- optional chat snippet sync to Firestore
+
+## Steps
+1. Create a Firebase project.
+2. Enable **Authentication** (Email/Password).
+3. Enable **Firestore Database**.
+4. Add a **Web App** in Firebase project settings.
+5. Copy values into the app Settings panel or use `firebase.config.example.json` as a reference.
+6. In Firebase Auth settings, add your deployed domain to **Authorized domains**.
+
+## Important note
+The browser app uses Firebase's public web config values. These are normal to expose in frontend apps, but your **security rules** must be configured properly.
+
+## Example Firestore collections used
+- `users/{uid}`
+- `users/{uid}/chatSnippets/{autoId}`
+
+## Suggested Firestore rules starter
+Adjust before production:
 
 ```text
-https://jarvis-app.railway.app
-```
-
-## Permanent QR
-Included file:
-
-```text
-qr/jarvis-app-railway-permanent-qr.png
-```
-
-## OpenRouter live setup
-Add these on Railway:
-
-```text
-ASTRA_AI_BASE_URL=https://openrouter.ai/api/v1
-ASTRA_AI_MODEL=openai/gpt-4.1-mini
-ASTRA_AI_API_KEY=YOUR_OPENROUTER_KEY
-ASTRA_SITE_URL=https://jarvis-app.railway.app
-ASTRA_SITE_TITLE=AstraX Bharat AI
-```
-
-## Serper live setup
-Add:
-
-```text
-ASTRA_SERPER_API_KEY=YOUR_SERPER_KEY
-```
-
-Then refresh opportunity feed:
-
-```bash
-npm run feed:refresh
-```
-
-## Firebase live setup
-In Firebase:
-1. Enable Email/Password auth
-2. Enable Firestore
-3. Add `jarvis-app.railway.app` to Authorized domains
-4. Put Firebase web app config into the app Settings screen
-
-## Android
-### PWA
-Open:
-```text
-https://jarvis-app.railway.app
-```
-and tap Install.
-
-### APK
-Follow:
-```text
-docs/ANDROID.md
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      match /chatSnippets/{snippetId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+  }
+}
 ```

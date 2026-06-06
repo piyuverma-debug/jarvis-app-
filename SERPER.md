@@ -1,43 +1,17 @@
-# Firebase setup guide
+# OpenRouter setup guide
 
-This project includes **Firebase-ready auth + Firestore hooks** in the frontend.
+## Backend env values
+Use `.env`:
 
-## What is already scaffolded
-- signup
-- login
-- logout
-- auth status chip
-- optional user profile sync to Firestore
-- optional chat snippet sync to Firestore
-
-## Steps
-1. Create a Firebase project.
-2. Enable **Authentication** (Email/Password).
-3. Enable **Firestore Database**.
-4. Add a **Web App** in Firebase project settings.
-5. Copy values into the app Settings panel or use `firebase.config.example.json` as a reference.
-6. In Firebase Auth settings, add your deployed domain to **Authorized domains**.
-
-## Important note
-The browser app uses Firebase's public web config values. These are normal to expose in frontend apps, but your **security rules** must be configured properly.
-
-## Example Firestore collections used
-- `users/{uid}`
-- `users/{uid}/chatSnippets/{autoId}`
-
-## Suggested Firestore rules starter
-Adjust before production:
-
-```text
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-      match /chatSnippets/{snippetId} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
-      }
-    }
-  }
-}
+```bash
+ASTRA_AI_BASE_URL=https://openrouter.ai/api/v1
+ASTRA_AI_MODEL=openai/gpt-4.1-mini
+ASTRA_AI_API_KEY=your_key
+ASTRA_SITE_URL=https://your-domain.com
+ASTRA_SITE_TITLE=AstraX Bharat AI
 ```
+
+## Notes
+- The backend automatically adds `HTTP-Referer` and `X-Title` headers for OpenRouter.
+- You can change the model to any OpenRouter-supported model.
+- Frontend also supports direct browser testing, but backend proxy is safer.

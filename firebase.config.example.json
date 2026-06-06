@@ -1,6 +1,8 @@
-FROM node:20-alpine
-WORKDIR /app
-COPY . .
-ENV PORT=3000
-EXPOSE 3000
-CMD ["node", "server.js"]
+{
+  "apiKey": "your_firebase_api_key",
+  "authDomain": "your-project.firebaseapp.com",
+  "projectId": "your-project-id",
+  "appId": "1:1234567890:web:abcdef123456",
+  "storageBucket": "your-project.firebasestorage.app",
+  "messagingSenderId": "1234567890"
+}

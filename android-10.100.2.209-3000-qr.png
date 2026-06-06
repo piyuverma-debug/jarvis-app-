@@ -1,54 +1,15 @@
-# Railway deploy guide
+# Serper setup guide
 
-## 1) Prepare project
-This project is already Railway-ready.
-
-Important files included:
-- `railway.toml`
-- `Procfile`
-- `package.json`
-- `server.js`
-
-## 2) Upload to Railway
-You can deploy by either:
-- connecting a GitHub repo, or
-- uploading/pushing this project to a repo first, then importing into Railway.
-
-## 3) Set environment variables
-Add these in Railway Variables:
-
-```text
-PORT=3000
-ASTRA_AI_BASE_URL=https://openrouter.ai/api/v1
-ASTRA_AI_MODEL=openai/gpt-4.1-mini
-ASTRA_AI_API_KEY=YOUR_OPENROUTER_KEY
-ASTRA_SITE_URL=https://your-railway-domain.up.railway.app
-ASTRA_SITE_TITLE=AstraX Bharat AI
-ASTRA_SERPER_API_KEY=YOUR_SERPER_KEY
+## Recommended env value
+```bash
+ASTRA_SERPER_API_KEY=your_serper_key
 ```
 
-Optional:
+## What it powers
+- `/api/search`
+- `/api/chat` source enrichment when web search is enabled
+- `/api/opportunities-refresh`
+- `npm run feed:refresh`
 
-```text
-ASTRA_SEARCH_ENDPOINT=
-ASTRA_SEARCH_API_KEY=
-ASTRA_IMAGE_ENDPOINT=
-ASTRA_IMAGE_API_KEY=
-ASTRA_TTS_ENDPOINT=
-ASTRA_TTS_API_KEY=
-```
-
-## 4) Deploy
-After deploy, Railway will generate a public URL such as:
-
-```text
-https://your-app-name.up.railway.app
-```
-
-## 5) Permanent QR
-Once you have the Railway public URL, create the QR in the app or send the URL back to Arena.ai and I can generate the final QR image file.
-
-## 6) Firebase note
-If using Firebase auth:
-- add your Railway domain in Firebase Auth -> Authorized domains
-- add your Firebase web config in app Settings
+## Tip
+Serper generally gives better search results than the public DuckDuckGo fallback.
